@@ -127,7 +127,8 @@ class User extends Authenticatable implements HasMedia
 
     public function companies(): BelongsToMany
     {
-        return $this->belongsToMany(Company::class, 'user_company', 'user_id', 'company_id');
+        return $this->belongsToMany(Company::class, 'user_company', 'user_id', 'company_id')
+            ->withPivot('is_owner');
     }
 
     public function expenses(): HasMany
@@ -330,12 +331,15 @@ class User extends Authenticatable implements HasMedia
         });
     }
 
+    /**
+     * Whether the user owns the active company: its main owner or a co-owner.
+     */
     public function isOwner()
     {
         if (Schema::hasColumn('companies', 'owner_id')) {
-            $company = Company::find(request()->header('company'));
+            $companyId = request()->header('company');
 
-            if ($company && $this->id == $company->owner_id) {
+            if ($companyId && $this->ownsCompany($companyId)) {
                 return true;
             }
         } else {
@@ -343,6 +347,31 @@ class User extends Authenticatable implements HasMedia
         }
 
         return false;
+    }
+
+    /**
+     * Whether the user is the company's main owner (`companies.owner_id`) or a
+     * co-owner of it (`user_company.is_owner`).
+     */
+    public function ownsCompany($companyId): bool
+    {
+        return $this->isMainOwnerOf($companyId)
+            || $this->companies()
+                ->where('companies.id', $companyId)
+                ->wherePivot('is_owner', true)
+                ->exists();
+    }
+
+    /**
+     * Whether the user is the company's main owner, the one who alone may
+     * delete or transfer it and manage its owners.
+     */
+    public function isMainOwnerOf($companyId): bool
+    {
+        return Company::query()
+            ->whereKey($companyId)
+            ->where('owner_id', $this->id)
+            ->exists();
     }
 
     public static function createFromRequest(UserRequest $request)
@@ -361,6 +390,8 @@ class User extends Authenticatable implements HasMedia
 
             BouncerFacade::sync($user)->roles([$company['role']]);
         }
+
+        $user->syncCoOwnership($request, $companies);
 
         return $user;
     }
@@ -384,7 +415,23 @@ class User extends Authenticatable implements HasMedia
             BouncerFacade::sync($this)->roles([$company['role']]);
         }
 
+        $this->syncCoOwnership($request, $companies);
+
         return $this;
+    }
+
+    /**
+     * Sets `is_owner` where it was sent and the caller is that company's main owner.
+     */
+    private function syncCoOwnership(UserRequest $request, $companies): void
+    {
+        foreach ($companies as $company) {
+            if (array_key_exists('is_owner', $company) && $request->user()->isMainOwnerOf($company['id'])) {
+                $this->companies()->updateExistingPivot($company['id'], [
+                    'is_owner' => filter_var($company['is_owner'], FILTER_VALIDATE_BOOLEAN),
+                ]);
+            }
+        }
     }
 
     public function checkAccess($data)

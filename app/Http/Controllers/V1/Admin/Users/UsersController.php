@@ -94,6 +94,9 @@ class UsersController extends Controller
             // from one company cannot delete accounts belonging to another.
             $ids = User::whereCompany()
                 ->whereIn('id', $request->users)
+                ->get()
+                // Skips owners' accounts unless UserPolicy::mayManageAccount allows it.
+                ->filter(fn (User $user) => $request->user()->can('delete', $user))
                 ->pluck('id')
                 ->toArray();
 

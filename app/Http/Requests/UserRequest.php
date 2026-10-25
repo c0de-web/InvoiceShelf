@@ -65,6 +65,10 @@ class UserRequest extends FormRequest
                 'required',
                 'string',
             ],
+            'companies.*.is_owner' => [
+                'sometimes',
+                'boolean',
+            ],
         ];
 
         if ($this->getMethod() == 'PUT') {
@@ -98,6 +102,11 @@ class UserRequest extends FormRequest
                     if (! $exists) {
                         $validator->errors()->add("companies.{$index}.role", 'This role does not exist in that company.');
                     }
+
+                    if (filter_var($membership['is_owner'] ?? false, FILTER_VALIDATE_BOOLEAN)
+                        && ! $this->user()->isMainOwnerOf($membership['id'] ?? null)) {
+                        $validator->errors()->add("companies.{$index}.is_owner", 'Only the company\'s main owner can make someone an owner.');
+                    }
                 }
 
                 if ($this->changesCredentialsOfSharedUser()) {
@@ -115,8 +124,11 @@ class UserRequest extends FormRequest
      */
     public function managedCompanyIds(): array
     {
+        $coOwned = $this->user()->companies()->wherePivot('is_owner', true)->pluck('companies.id');
+
         return Company::query()
             ->where('owner_id', $this->user()->id)
+            ->orWhereIn('id', $coOwned)
             ->pluck('id')
             ->map(fn ($id) => (int) $id)
             ->all();

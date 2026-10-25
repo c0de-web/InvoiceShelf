@@ -54,7 +54,7 @@ class UserPolicy
      */
     public function update(User $user, User $model): bool
     {
-        return $user->isOwner() && $this->sharesActiveCompany($model);
+        return $user->isOwner() && $this->sharesActiveCompany($model) && $this->mayManageAccount($user, $model);
     }
 
     /**
@@ -64,7 +64,7 @@ class UserPolicy
      */
     public function delete(User $user, User $model): bool
     {
-        return $user->isOwner() && $this->sharesActiveCompany($model);
+        return $user->isOwner() && $this->sharesActiveCompany($model) && $this->mayManageAccount($user, $model);
     }
 
     /**
@@ -135,5 +135,15 @@ class UserPolicy
 
         return $companyId
             && $model->companies()->wherePivot('company_id', $companyId)->exists();
+    }
+
+    /**
+     * Only the main owner may change or delete an owner's account, so a co-owner can't take over the main owner's.
+     */
+    public function mayManageAccount(User $user, User $model): bool
+    {
+        $companyId = request()->header('company');
+
+        return ! $model->ownsCompany($companyId) || $user->isMainOwnerOf($companyId);
     }
 }

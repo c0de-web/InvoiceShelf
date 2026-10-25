@@ -103,6 +103,25 @@
                       @change="v.role.$touch()"
                     />
                   </BaseInputGroup>
+
+                  <p
+                    v-if="isMainOwner(company)"
+                    class="text-sm text-gray-500"
+                  >
+                    {{ $t('users.main_owner', { company: company.name }) }}
+                  </p>
+
+                  <div v-else-if="canManageOwners(company)">
+                    <BaseSwitch
+                      v-model="userStore.userData.companies[i].is_owner"
+                      :label-right="
+                        $t('users.company_owner', { company: company.name })
+                      "
+                    />
+                    <p class="mt-1 text-sm text-gray-500">
+                      {{ $t('users.company_owner_help') }}
+                    </p>
+                  </div>
                 </div>
               </template>
             </ValidateEach>
@@ -176,8 +195,10 @@ import useVuelidate from '@vuelidate/core'
 import { ValidateEach } from '@vuelidate/components'
 import { useI18n } from 'vue-i18n'
 import { useUsersStore } from '@/scripts/admin/stores/users'
+import { useUserStore } from '@/scripts/admin/stores/user'
 
 const userStore = useUsersStore()
+const currentUserStore = useUserStore()
 
 const { t } = useI18n()
 const route = useRoute()
@@ -263,6 +284,16 @@ async function loadInitialData() {
   isFetchingInitialData.value = false
 }
 
+// The user being edited is this company's main owner.
+function isMainOwner(company) {
+  return isEdit.value && company.owner_id === userStore.userData.id
+}
+
+// Only the company's main owner can make or remove co-owners.
+function canManageOwners(company) {
+  return company.owner_id === currentUserStore.currentUser?.id
+}
+
 async function submitUser() {
   v$.value.$touch()
 
@@ -278,6 +309,9 @@ async function submitUser() {
         return {
           role: c.role,
           id: c.id,
+          ...(canManageOwners(c) && !isMainOwner(c)
+            ? { is_owner: !!c.is_owner }
+            : {}),
         }
       }),
     }

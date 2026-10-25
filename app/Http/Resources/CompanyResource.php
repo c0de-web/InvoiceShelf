@@ -23,6 +23,7 @@ class CompanyResource extends JsonResource
             'logo_path' => $this->logo_path,
             'unique_hash' => $this->unique_hash,
             'owner_id' => $this->owner_id,
+            'is_owner' => $this->whenPivotLoaded('user_company', fn () => (bool) $this->pivot->is_owner),
             'slug' => $this->slug,
             'address' => $this->when($this->address()->exists(), function () {
                 return new AddressResource($this->address);

@@ -782,7 +782,10 @@
     "updated_message": "User updated successfully",
     "deleted_message": "User deleted successfully | Users deleted successfully",
     "select_company_role": "Select Role for {company}",
-    "companies": "Companies"
+    "companies": "Companies",
+    "company_owner": "Owner of {company}",
+    "company_owner_help": "Owners can change the company information and settings and manage users. Only the main owner can make owners, change their accounts, transfer or delete the company.",
+    "main_owner": "Main owner of {company}"
   },
   "reports": {
     "title": "Report",
