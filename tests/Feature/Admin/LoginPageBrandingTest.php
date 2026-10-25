@@ -107,6 +107,31 @@ test('the login page uses the main company brand colour and links the source cod
 
     $html = view('app')->render();
 
-    expect($html)->toContain('window.login_brand_color = "#198A75"')
+    expect($html)->toContain('window.login_brand_color = "#198A75";')
         ->toContain('window.source_code_url = '.json_encode(config('invoiceshelf.source_code_url'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT));
+});
+
+test('the page script is valid javascript with every login setting set', function () {
+    $first = Company::query()->orderBy('id')->first();
+    CompanySetting::setSettings(['brand_color' => '#198A75'], $first->id);
+    putJson('/api/v1/branding/login-page', loginTexts())->assertOk();
+    postJson('/api/v1/branding/login-logo', ['login_logo' => loginLogoEnvelope()])->assertOk();
+
+    preg_match('#<script type="module">(.*?)</script>\s*</body>#s', view('app')->render(), $match);
+    $script = tempnam(sys_get_temp_dir(), 'page').'.mjs';
+    file_put_contents($script, str_replace('window.InvoiceShelf.start()', '', $match[1]));
+
+    exec('node --check '.escapeshellarg($script).' 2>&1', $output, $exitCode);
+
+    expect($exitCode)->toBe(0, implode("\n", $output));
+});
+
+test('the page script is valid javascript with no login settings', function () {
+    preg_match('#<script type="module">(.*?)</script>\s*</body>#s', view('app')->render(), $match);
+    $script = tempnam(sys_get_temp_dir(), 'page').'.mjs';
+    file_put_contents($script, str_replace('window.InvoiceShelf.start()', '', $match[1]));
+
+    exec('node --check '.escapeshellarg($script).' 2>&1', $output, $exitCode);
+
+    expect($exitCode)->toBe(0, implode("\n", $output));
 });

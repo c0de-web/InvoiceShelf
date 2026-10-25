@@ -52,17 +52,17 @@
         @endif
         @php($loginPage = \App\Support\LoginPage::settings())
         @if(!empty($loginPage['login_page_logo']))
-        window.login_page_logo = @json('/storage/'.$loginPage['login_page_logo'])
+        window.login_page_logo = @json('/storage/'.$loginPage['login_page_logo']);
         @endif
         @foreach(\App\Support\LoginPage::TEXT_SETTINGS as $key)
         @if(!empty($loginPage[$key]))
-        window.{{ $key }} = @json($loginPage[$key])
+        window.{{ $key }} = @json($loginPage[$key]);
         @endif
         @endforeach
         @if($loginBrandColor = \App\Support\LoginPage::brandColor())
-        window.login_brand_color = @json($loginBrandColor)
+        window.login_brand_color = @json($loginBrandColor);
         @endif
-        window.source_code_url = @json(config('invoiceshelf.source_code_url'))
+        window.source_code_url = @json(config('invoiceshelf.source_code_url'));
 
         @if(config('app.env') === 'demo')
             window.demo_mode = true
