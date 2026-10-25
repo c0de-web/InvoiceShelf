@@ -56,7 +56,7 @@ import {
   Users as CustomerIcon,
   FileText as InvoiceIcon,
   ClipboardList as EstimateIcon,
-} from 'lucide-vue-next'
+} from '@lucide/vue'
 import abilities from '@/scripts/admin/stub/abilities'
 import DashboardStatsItem from './DashboardStatsItem.vue'
 

@@ -54,7 +54,7 @@ import {
   FileText as InvoiceIcon,
   CreditCard as PaymentIcon,
   ClipboardList as EstimateIcon,
-} from 'lucide-vue-next'
+} from '@lucide/vue'
 
 import { useGlobalStore } from '@/scripts/customer/stores/global'
 import { useDashboardStore } from '@/scripts/customer/stores/dashboard'

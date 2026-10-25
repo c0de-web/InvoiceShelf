@@ -80,7 +80,7 @@ import {
   UserPlus,
   Users,
   X,
-} from 'lucide-vue-next'
+} from '@lucide/vue'
 
 // Icons are still named after Heroicons everywhere; this draws the Lucide equivalent.
 // A name missing here falls back to the Heroicon, so nothing renders blank.
