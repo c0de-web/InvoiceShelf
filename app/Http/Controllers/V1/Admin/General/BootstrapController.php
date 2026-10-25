@@ -57,6 +57,7 @@ class BootstrapController extends Controller
             'login_page_heading',
             'login_page_description',
             'admin_page_title',
+            'app_icon_version',
             'copyright_text',
         ]);
 

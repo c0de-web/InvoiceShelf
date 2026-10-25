@@ -1159,7 +1159,15 @@
       "sample_button": "Sample button",
       "save": "Save",
       "reset": "Back to the default colour",
-      "saved": "Brand colour saved"
+      "saved": "Brand colour saved",
+      "header_logo": "Header logo",
+      "header_logo_help": "Shown in the coloured bar at the top instead of InvoiceShelf. PNG or JPG; a white or light version on a transparent background reads best.",
+      "header_logo_saved": "Header logo saved",
+      "header_logo_removed": "Header logo removed",
+      "app_icon": "App icon",
+      "app_icon_help": "The browser tab and home-screen icon for everyone. PNG or JPG, ideally square; anything else is cropped to its centre.",
+      "app_icon_saved": "App icon saved. Reload the page to see it in the tab.",
+      "app_icon_removed": "App icon removed"
     },
     "notification": {
       "title": "Notifications",

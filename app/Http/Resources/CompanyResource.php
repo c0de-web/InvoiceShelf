@@ -21,6 +21,7 @@ class CompanyResource extends JsonResource
             'tax_id' => $this->tax_id,
             'logo' => $this->logo,
             'logo_path' => $this->logo_path,
+            'header_logo' => $this->header_logo,
             'unique_hash' => $this->unique_hash,
             'owner_id' => $this->owner_id,
             'is_owner' => $this->whenPivotLoaded('user_company', fn () => (bool) $this->pivot->is_owner),

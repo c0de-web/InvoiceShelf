@@ -74,6 +74,33 @@
         </BaseButton>
       </div>
     </form>
+
+    <BaseDivider class="my-8" />
+
+    <BaseInputGroup
+      :label="$t('settings.branding.header_logo')"
+      :help-text="$t('settings.branding.header_logo_help')"
+    >
+      <BaseFileUploader
+        v-model="headerLogoPreview"
+        base64
+        @change="(name, data, count, file) => uploadImage('header_logo', file.name, data)"
+        @remove="removeImage('header_logo')"
+      />
+    </BaseInputGroup>
+
+    <BaseInputGroup
+      class="mt-8"
+      :label="$t('settings.branding.app_icon')"
+      :help-text="$t('settings.branding.app_icon_help')"
+    >
+      <BaseFileUploader
+        v-model="appIconPreview"
+        base64
+        @change="(name, data, count, file) => uploadImage('app_icon', file.name, data)"
+        @remove="removeImage('app_icon')"
+      />
+    </BaseInputGroup>
   </BaseSettingCard>
 </template>
 
@@ -81,11 +108,15 @@
 import { ref, reactive, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useCompanyStore } from '@/scripts/admin/stores/company'
+import { useGlobalStore } from '@/scripts/admin/stores/global'
+import { useNotificationStore } from '@/scripts/stores/notification'
 import { brandPalette, isBrandColor } from '@/scripts/helpers/brand-color'
 
 const DEFAULT_COLOR = '#5851DB'
 
 const companyStore = useCompanyStore()
+const globalStore = useGlobalStore()
+const notificationStore = useNotificationStore()
 const { t } = useI18n()
 
 const isSaving = ref(false)
@@ -125,5 +156,44 @@ async function save(color) {
   } finally {
     isSaving.value = false
   }
+}
+
+const headerLogoPreview = ref(
+  companyStore.selectedCompany?.header_logo
+    ? [{ image: companyStore.selectedCompany.header_logo }]
+    : []
+)
+
+const appIconPreview = ref(
+  globalStore.globalSettings.app_icon_version
+    ? [{ image: `/storage/branding/app-icon-192.png?v=${globalStore.globalSettings.app_icon_version}` }]
+    : []
+)
+
+const uploaders = {
+  header_logo: (data) => companyStore.updateHeaderLogo(data),
+  app_icon: (data) => companyStore.updateAppIcon(data),
+}
+
+async function uploadImage(field, name, data) {
+  const form = new FormData()
+  form.append(field, JSON.stringify({ name, data }))
+
+  await uploaders[field](form)
+  notificationStore.showNotification({
+    type: 'success',
+    message: t(`settings.branding.${field}_saved`),
+  })
+}
+
+async function removeImage(field) {
+  const form = new FormData()
+  form.append(`is_${field}_removed`, true)
+
+  await uploaders[field](form)
+  notificationStore.showNotification({
+    type: 'success',
+    message: t(`settings.branding.${field}_removed`),
+  })
 }
 </script>

@@ -5,12 +5,19 @@
     <meta charset="utf-8">
     <title>{{ get_page_title(!Request::header('company')) }}</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    @if(\App\Support\AppIcon::version())
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ \App\Support\AppIcon::url(180) }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ \App\Support\AppIcon::url(32) }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ \App\Support\AppIcon::url(16) }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ \App\Support\AppIcon::url(192) }}">
+    @else
     <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png">
     <link rel="manifest" href="/favicons/site.webmanifest">
     <link rel="mask-icon" href="/favicons/safari-pinned-tab.svg" color="#5851d8">
     <link rel="shortcut icon" href="/favicons/favicon.ico">
+    @endif
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-config" content="/favicons/browserconfig.xml">
     <meta name="theme-color" content="#ffffff">

@@ -69,6 +69,7 @@ use App\Http\Controllers\V1\Admin\RecurringInvoice\RecurringInvoiceController;
 use App\Http\Controllers\V1\Admin\RecurringInvoice\RecurringInvoiceFrequencyController;
 use App\Http\Controllers\V1\Admin\Role\AbilitiesController;
 use App\Http\Controllers\V1\Admin\Role\RolesController;
+use App\Http\Controllers\V1\Admin\Settings\BrandingController;
 use App\Http\Controllers\V1\Admin\Settings\CompanyController;
 use App\Http\Controllers\V1\Admin\Settings\CompanyCurrencyCheckTransactionsController;
 use App\Http\Controllers\V1\Admin\Settings\DiskController;
@@ -381,6 +382,10 @@ Route::prefix('/v1')->group(function () {
             Route::put('/company', [CompanyController::class, 'updateCompany']);
 
             Route::post('/company/upload-logo', [CompanyController::class, 'uploadCompanyLogo']);
+
+            Route::post('/company/upload-header-logo', [BrandingController::class, 'uploadHeaderLogo']);
+
+            Route::post('/app-icon', [BrandingController::class, 'uploadAppIcon']);
 
             Route::get('/company/settings', GetCompanySettingsController::class);
 

@@ -62,6 +62,14 @@ class Company extends Model implements HasMedia
         return null;
     }
 
+    /**
+     * The logo shown in the app's coloured header bar, in place of the InvoiceShelf wordmark.
+     */
+    public function getHeaderLogoAttribute(): ?string
+    {
+        return $this->getFirstMedia('header_logo')?->getFullUrl();
+    }
+
     public function customers(): HasMany
     {
         return $this->hasMany(Customer::class);

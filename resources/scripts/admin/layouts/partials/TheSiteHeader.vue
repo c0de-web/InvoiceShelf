@@ -33,7 +33,7 @@
         md:block
       "
     >
-      <img v-if="adminLogo" :src="adminLogo" class="h-6" />
+      <img v-if="adminLogo" :src="adminLogo" class="h-8 max-w-[12rem] object-contain" />
       <MainLogo v-else class="h-6" light-color="white" dark-color="white" />
     </router-link>
 
@@ -178,6 +178,7 @@ import { useRouter } from 'vue-router'
 import { computed } from 'vue'
 import { useUserStore } from '@/scripts/admin/stores/user'
 import { useGlobalStore } from '@/scripts/admin/stores/global'
+import { useCompanyStore } from '@/scripts/admin/stores/company'
 
 import CompanySwitcher from '@/scripts/components/CompanySwitcher.vue'
 import GlobalSearchBar from '@/scripts/components/GlobalSearchBar.vue'
@@ -188,6 +189,7 @@ import abilities from '@/scripts/admin/stub/abilities'
 const authStore = useAuthStore()
 const userStore = useUserStore()
 const globalStore = useGlobalStore()
+const companyStore = useCompanyStore()
 const router = useRouter()
 
 const previewAvatar = computed(() => {
@@ -197,6 +199,10 @@ const previewAvatar = computed(() => {
 })
 
 const adminLogo = computed(() => {
+  if (companyStore.selectedCompany?.header_logo) {
+    return companyStore.selectedCompany.header_logo
+  }
+
   if (globalStore.globalSettings.admin_portal_logo) {
     return '/storage/' + globalStore.globalSettings.admin_portal_logo
   }

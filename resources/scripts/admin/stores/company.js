@@ -63,6 +63,35 @@ export const useCompanyStore = (useWindow = false) => {
         })
       },
 
+      updateHeaderLogo(data) {
+        return new Promise((resolve, reject) => {
+          http
+            .post('/api/v1/company/upload-header-logo', data)
+            .then((response) => {
+              this.selectedCompany.header_logo = response.data.data.header_logo
+              resolve(response)
+            })
+            .catch((err) => {
+              handleError(err)
+              reject(err)
+            })
+        })
+      },
+
+      updateAppIcon(data) {
+        return new Promise((resolve, reject) => {
+          http
+            .post('/api/v1/app-icon', data)
+            .then((response) => {
+              resolve(response)
+            })
+            .catch((err) => {
+              handleError(err)
+              reject(err)
+            })
+        })
+      },
+
       updateCompanyLogo(data) {
         return new Promise((resolve, reject) => {
           http
