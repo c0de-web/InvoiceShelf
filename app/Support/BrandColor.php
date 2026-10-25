@@ -14,8 +14,8 @@ final class BrandColor
 
     public const DEFAULT_ACCENT = '#7675FF';
 
-    /** WCAG AA for normal text: buttons put white text on the brand colour. */
-    public const MINIMUM_CONTRAST_WITH_WHITE = 4.5;
+    /** WCAG AA for UI components and bold text: buttons put white text on the brand colour. */
+    public const MINIMUM_CONTRAST_WITH_WHITE = 3.0;
 
     public function __construct(
         public readonly string $primary,

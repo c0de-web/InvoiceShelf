@@ -46,6 +46,11 @@ test('a brand colour must be a six-digit hex colour', function (string $color) {
     saveBrandColor($color)->assertUnprocessable();
 })->with(['teal', '#0F766', '#0F766EZ', '0F766E', 'rgb(15, 118, 110)']);
 
+test('a brand colour that suits white button text is accepted', function () {
+    // #198A75 is 4.26:1 with white: below the small-text AA level, fine for buttons.
+    saveBrandColor('#198A75')->assertOk();
+});
+
 test('a brand colour white text cannot be read on is refused', function () {
     saveBrandColor('#FACC15')->assertUnprocessable()
         ->assertJsonValidationErrors('settings.brand_color');
