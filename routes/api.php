@@ -11,6 +11,8 @@ use App\Http\Controllers\V1\Admin\Customer\CustomersController;
 use App\Http\Controllers\V1\Admin\Customer\CustomerStatsController;
 use App\Http\Controllers\V1\Admin\CustomField\CustomFieldsController;
 use App\Http\Controllers\V1\Admin\Dashboard\DashboardController;
+use App\Http\Controllers\V1\Admin\Engagement\EngagementsController;
+use App\Http\Controllers\V1\Admin\Engagement\MilestoneInvoiceController;
 use App\Http\Controllers\V1\Admin\Estimate\ChangeEstimateStatusController;
 use App\Http\Controllers\V1\Admin\Estimate\CloneEstimateController;
 use App\Http\Controllers\V1\Admin\Estimate\ConvertEstimateController;
@@ -262,6 +264,10 @@ Route::prefix('/v1')->group(function () {
             Route::resource('units', UnitsController::class);
 
             Route::apiResource('item-categories', ItemCategoriesController::class);
+
+            Route::apiResource('engagements', EngagementsController::class);
+
+            Route::post('/engagements/{engagement}/milestones/{milestone}/invoice', MilestoneInvoiceController::class);
 
             // Invoices
             // -------------------------------------------------

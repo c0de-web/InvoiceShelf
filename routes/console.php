@@ -24,4 +24,9 @@ if (InstallUtils::isDbCreated()) {
     Schedule::command('recurring-invoices:generate')
         ->everyMinute()
         ->withoutOverlapping();
+
+    // Hourly, so each company's milestones fall due on its own local date.
+    Schedule::command('engagements:invoice-due-milestones')
+        ->hourly()
+        ->withoutOverlapping();
 }

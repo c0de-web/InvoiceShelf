@@ -388,6 +388,16 @@ return [
             'model' => Item::class,
         ],
         [
+            'title' => 'navigation.engagements',
+            'group' => 2,
+            'link' => '/admin/engagements',
+            'icon' => 'BriefcaseIcon',
+            'name' => 'Engagements',
+            'owner_only' => false,
+            'ability' => 'view-invoice',
+            'model' => Invoice::class,
+        ],
+        [
             'title' => 'navigation.estimates',
             'group' => 2,
             'link' => '/admin/estimates',

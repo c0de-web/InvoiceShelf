@@ -90,6 +90,9 @@ const NotFoundPage = () => import('@/scripts/admin/views/errors/404.vue')
 
 // Invoice
 const InvoiceIndex = () => import('@/scripts/admin/views/invoices/Index.vue')
+const EngagementIndex = () => import('@/scripts/admin/views/engagements/Index.vue')
+const EngagementCreate = () => import('@/scripts/admin/views/engagements/Create.vue')
+const EngagementView = () => import('@/scripts/admin/views/engagements/View.vue')
 const InvoiceCreate = () =>
   import('@/scripts/admin/views/invoices/create/InvoiceCreate.vue')
 const InvoiceView = () => import('@/scripts/admin/views/invoices/View.vue')
@@ -436,6 +439,32 @@ export default [
         name: 'estimates.edit',
         meta: { ability: abilities.EDIT_ESTIMATE },
         component: EstimateCreate,
+      },
+
+      // Engagements
+      {
+        path: 'engagements',
+        name: 'engagements.index',
+        meta: { ability: abilities.VIEW_INVOICE },
+        component: EngagementIndex,
+      },
+      {
+        path: 'engagements/create',
+        name: 'engagements.create',
+        meta: { ability: abilities.CREATE_INVOICE },
+        component: EngagementCreate,
+      },
+      {
+        path: 'engagements/:id/edit',
+        name: 'engagements.edit',
+        meta: { ability: abilities.EDIT_INVOICE },
+        component: EngagementCreate,
+      },
+      {
+        path: 'engagements/:id/view',
+        name: 'engagements.view',
+        meta: { ability: abilities.VIEW_INVOICE },
+        component: EngagementView,
       },
 
       // Invoices
