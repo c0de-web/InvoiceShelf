@@ -1,0 +1,120 @@
+name: Deploy
+
+# Production (invoice.c0deweb.com) only changes when someone presses
+# "Run workflow" on the c0deweb branch. The manual trigger is the approval step.
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: What to do
+        type: choice
+        options: [deploy, rollback]
+        default: deploy
+
+# Never run two production changes at once, and never cancel one midway.
+concurrency:
+  group: production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    if: github.ref == 'refs/heads/c0deweb' && inputs.action == 'deploy'
+    uses: ./.github/workflows/tests.yaml
+
+  build:
+    needs: tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: bcmath, curl, gd, intl, mbstring, zip
+          coverage: none
+
+      - run: composer install --no-dev --optimize-autoloader --no-interaction --no-progress --prefer-dist
+
+      # pnpm's version comes from packageManager in package.json.
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+
+      # Builds public/build: the Vue admin and customer portal.
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+
+      # Ship exactly what was tested. storage/ and .env live on the server and
+      # are linked into every release, so they are left out here.
+      - name: Package the release
+        run: |
+          rm -f bootstrap/cache/*.php
+          tar -czf "$RUNNER_TEMP/release.tar.gz" \
+            --exclude=./.git --exclude=./.github --exclude=./tests \
+            --exclude=./storage --exclude=./node_modules --exclude=./.env \
+            .
+          ls -lh "$RUNNER_TEMP/release.tar.gz"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release
+          path: ${{ runner.temp }}/release.tar.gz
+          retention-days: 7
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release
+          path: release
+
+      - name: Configure ssh
+        run: &configure-ssh |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          # The trailing newline matters: without it OpenSSH fails to parse the key.
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "${{ secrets.DEPLOY_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      # The server's authorized_keys pins this key to the deploy script, which
+      # reads the tarball from stdin, backs up the database, migrates, switches
+      # the symlink and rolls itself back if the health check fails.
+      - name: Deploy
+        env:
+          TARGET: ${{ secrets.DEPLOY_HOST }}
+        run: |
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o BatchMode=yes "$TARGET" \
+            "deploy $GITHUB_SHA" < release/release.tar.gz
+
+      - name: Verify the live site
+        run: &verify |
+          code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 https://invoice.c0deweb.com/login)
+          echo "login page: $code"
+          test "$code" = "200"
+
+  rollback:
+    if: github.ref == 'refs/heads/c0deweb' && inputs.action == 'rollback'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Configure ssh
+        run: *configure-ssh
+
+      - name: Roll back
+        env:
+          TARGET: ${{ secrets.DEPLOY_HOST }}
+        run: ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o BatchMode=yes "$TARGET" rollback
+
+      - name: Verify the live site
+        run: *verify

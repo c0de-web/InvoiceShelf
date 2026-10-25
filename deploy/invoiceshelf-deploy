@@ -1,0 +1,171 @@
+#!/bin/bash
+#
+# Deploys, rolls back or reports on InvoiceShelf at invoice.c0deweb.com.
+# Installed on the server as /usr/local/bin/invoiceshelf-deploy (root:root,
+# 0755) and run as root through sudo.
+#
+# The CI deploy key cannot open a shell: authorized_keys pins it to
+#   sudo /usr/local/bin/invoiceshelf-deploy "$SSH_ORIGINAL_COMMAND"
+# so the only things it can ask for are the commands below.
+#
+#   deploy <git sha>   read a release tarball on stdin and make it live
+#   rollback           make the previous release live again
+#   status             show the live release and the ones kept on disk
+#
+# Layout:
+#   /var/www/invoice/releases/<utc timestamp>-<sha>/   one folder per release
+#   /var/www/invoice/shared/.env                        linked into every release
+#   /var/www/invoice/shared/storage/                    uploads, logs, caches
+#   /var/www/invoice/current -> releases/...            what Apache serves
+#
+# Rollback only moves the symlink back; it does not undo migrations. Keep
+# migrations backward compatible (add columns, don't drop or rename in the
+# same release) so the previous release still runs against the new schema.
+# Every deploy takes a database dump first, in /var/backups/invoiceshelf.
+
+set -euo pipefail
+
+APP=/var/www/invoice
+RELEASES=$APP/releases
+SHARED=$APP/shared
+CURRENT=$APP/current
+BACKUPS=/var/backups/invoiceshelf
+# The other sites on this box run on Ubuntu's PHP 8.3; InvoiceShelf needs 8.4.
+PHP=/usr/bin/php8.4
+FPM_SERVICE=php8.4-fpm
+WEB_USER=www-data
+KEEP_RELEASES=5
+KEEP_BACKUPS=10
+
+log() { echo "[invoiceshelf-deploy] $*"; }
+fail() { echo "[invoiceshelf-deploy] ERROR: $*" >&2; exit 1; }
+
+artisan() {
+    local release=$1; shift
+    sudo -u "$WEB_USER" "$PHP" "$release/artisan" "$@" --no-interaction
+}
+
+env_value() {
+    grep -E "^$1=" "$SHARED/.env" | tail -1 | cut -d= -f2- | sed -E 's/^"(.*)"$/\1/'
+}
+
+live_host() {
+    env_value APP_URL | sed -E 's#^https?://##; s#/.*$##'
+}
+
+# The release the symlink points at, or nothing before the first deploy.
+current_release() {
+    [ -L "$CURRENT" ] && readlink -f "$CURRENT" || true
+}
+
+# Kept releases, oldest first. Folder names start with a UTC timestamp, so a
+# plain sort is chronological.
+releases() {
+    find "$RELEASES" -mindepth 1 -maxdepth 1 -type d | sort
+}
+
+switch_to() {
+    ln -sfn "$1" "$APP/current.tmp"
+    mv -Tf "$APP/current.tmp" "$CURRENT"
+    # PHP-FPM caches resolved paths; reload so it follows the new symlink now.
+    systemctl reload "$FPM_SERVICE"
+}
+
+healthy() {
+    local host
+    host=$(live_host)
+    curl -fsS -o /dev/null --max-time 20 --resolve "$host:443:127.0.0.1" "https://$host/login"
+}
+
+backup_database() {
+    local sha=$1 db file
+    db=$(env_value DB_DATABASE)
+    [ -n "$db" ] || fail "DB_DATABASE is not set in $SHARED/.env"
+    mkdir -p "$BACKUPS"
+    chmod 700 "$BACKUPS"
+    file="$BACKUPS/$db-$(date -u +%Y%m%d%H%M%S)-before-$sha.sql.gz"
+    mysqldump --single-transaction --routines --triggers --set-gtid-purged=OFF "$db" | gzip > "$file"
+    chmod 600 "$file"
+    log "database backed up to $file"
+    find "$BACKUPS" -maxdepth 1 -name "$db-*.sql.gz" | sort | head -n -"$KEEP_BACKUPS" | xargs -r rm -f
+}
+
+prune_releases() {
+    local live
+    live=$(current_release)
+    releases | head -n -"$KEEP_RELEASES" | while read -r old; do
+        [ "$old" = "$live" ] || rm -rf "$old"
+    done
+}
+
+deploy() {
+    local sha=$1 release previous
+    [[ $sha =~ ^[0-9a-f]{7,40}$ ]] || fail "not a git sha: $sha"
+    [ -f "$SHARED/.env" ] || fail "$SHARED/.env is missing"
+    [ -d "$SHARED/storage" ] || fail "$SHARED/storage is missing"
+
+    release="$RELEASES/$(date -u +%Y%m%d%H%M%S)-${sha:0:12}"
+    previous=$(current_release)
+    mkdir -p "$release"
+    log "unpacking $sha into $release"
+    tar -xzf - -C "$release"
+    [ -f "$release/artisan" ] || { rm -rf "$release"; fail "the tarball has no artisan file"; }
+    echo "$sha" > "$release/REVISION"
+
+    rm -rf "$release/storage"
+    ln -s "$SHARED/storage" "$release/storage"
+    ln -sfn "$SHARED/.env" "$release/.env"
+    ln -sfn ../storage/app/public "$release/public/storage"
+    chown -R root:"$WEB_USER" "$release"
+    chmod -R g+rX,o-rwx "$release"
+    chown -R "$WEB_USER":"$WEB_USER" "$release/bootstrap/cache"
+
+    backup_database "${sha:0:12}"
+    artisan "$release" migrate --force
+    artisan "$release" config:cache
+    artisan "$release" route:cache
+    artisan "$release" view:cache
+
+    switch_to "$release"
+    if ! healthy; then
+        log "health check failed after switching to $release"
+        if [ -n "$previous" ]; then
+            switch_to "$previous"
+            log "switched back to $previous"
+        fi
+        fail "deploy of $sha failed"
+    fi
+
+    prune_releases
+    log "live: $release"
+}
+
+rollback() {
+    local live previous
+    live=$(current_release)
+    [ -n "$live" ] || fail "nothing is deployed yet"
+    previous=$(releases | grep -B1 -xF "$live" | head -1)
+    [ -n "$previous" ] && [ "$previous" != "$live" ] || fail "no release older than $live to roll back to"
+
+    switch_to "$previous"
+    healthy || fail "health check failed after rolling back to $previous"
+    log "rolled back from $live to $previous"
+}
+
+status() {
+    local live
+    live=$(current_release)
+    echo "live: ${live:-none}"
+    releases | while read -r r; do
+        printf '%s %s %s\n' "$([ "$r" = "$live" ] && echo '*' || echo ' ')" "$(basename "$r")" "$(cat "$r/REVISION" 2>/dev/null)"
+    done
+}
+
+# The forced SSH command passes everything the client asked for as one string.
+read -r -a args <<< "${1:-}"
+case "${args[0]:-}" in
+    deploy)   [ ${#args[@]} -eq 2 ] || fail "usage: deploy <git sha>"; deploy "${args[1]}" ;;
+    rollback) [ ${#args[@]} -eq 1 ] || fail "usage: rollback"; rollback ;;
+    status)   [ ${#args[@]} -eq 1 ] || fail "usage: status"; status ;;
+    *)        fail "usage: deploy <git sha> | rollback | status" ;;
+esac
