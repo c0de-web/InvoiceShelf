@@ -114,7 +114,14 @@
     "settings": "Settings",
     "logout": "Logout",
     "users": "Users",
-    "modules": "Modules"
+    "modules": "Modules",
+    "item_categories": "Item Categories",
+    "expense_categories": "Expense Categories",
+    "groups": {
+      "sales": "Sales",
+      "catalogue": "Catalogue",
+      "costs": "Costs"
+    }
   },
   "general": {
     "add_company": "Add Company",

@@ -76,6 +76,12 @@
               :key="menu"
               class="mt-5 space-y-1"
             >
+              <p
+                v-if="groupTitle(menu)"
+                class="pl-5 pb-1 text-xs font-medium tracking-wide text-gray-400 uppercase"
+              >
+                {{ $t(groupTitle(menu)) }}
+              </p>
               <router-link
                 v-for="item in menu"
                 :key="item.name"
@@ -130,6 +136,12 @@
       :key="menu"
       class="p-0 m-0 mt-6 list-none"
     >
+      <p
+        v-if="groupTitle(menu)"
+        class="pl-7 pb-1 text-xs font-medium tracking-wide text-gray-400 uppercase"
+      >
+        {{ $t(groupTitle(menu)) }}
+      </p>
       <router-link
         v-for="item in menu"
         :key="item"
@@ -175,5 +187,9 @@ const globalStore = useGlobalStore()
 
 function hasActiveUrl(url) {
   return route.path.indexOf(url) > -1
+}
+
+function groupTitle(menu) {
+  return globalStore.config?.main_menu_groups?.[menu[0].group]
 }
 </script>

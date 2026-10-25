@@ -45,10 +45,9 @@ const CustomFieldsIndex = () =>
   import('@/scripts/admin/views/settings/CustomFieldsSetting.vue')
 const NotesSetting = () =>
   import('@/scripts/admin/views/settings/NotesSetting.vue')
-const ExpenseCategory = () =>
-  import('@/scripts/admin/views/settings/ExpenseCategorySetting.vue')
-const ItemCategories = () =>
-  import('@/scripts/admin/views/settings/ItemCategorySetting.vue')
+const ExpenseCategories = () =>
+  import('@/scripts/admin/views/expenses/Categories.vue')
+const ItemCategories = () => import('@/scripts/admin/views/items/Categories.vue')
 const ExchangeRateSetting = () =>
   import('@/scripts/admin/views/settings/ExchangeRateProviderSetting.vue')
 const MailConfig = () =>
@@ -313,15 +312,11 @@ export default [
           },
           {
             path: 'expense-category',
-            name: 'expense.category',
-            meta: { ability: abilities.VIEW_EXPENSE },
-            component: ExpenseCategory,
+            redirect: '/admin/expense-categories',
           },
           {
             path: 'item-categories',
-            name: 'item.categories',
-            meta: { ability: abilities.VIEW_ITEM },
-            component: ItemCategories,
+            redirect: '/admin/item-categories',
           },
 
           {
@@ -375,6 +370,12 @@ export default [
         meta: { ability: abilities.EDIT_ITEM },
         component: ItemCreate,
       },
+      {
+        path: 'item-categories',
+        name: 'item.categories',
+        meta: { ability: abilities.VIEW_ITEM },
+        component: ItemCategories,
+      },
 
       // Expenses
       {
@@ -393,6 +394,12 @@ export default [
         name: 'expenses.edit',
         meta: { ability: abilities.EDIT_EXPENSE },
         component: ExpenseCreate,
+      },
+      {
+        path: 'expense-categories',
+        name: 'expense.categories',
+        meta: { ability: abilities.VIEW_EXPENSE },
+        component: ExpenseCategories,
       },
 
       // Users

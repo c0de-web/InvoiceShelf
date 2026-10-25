@@ -292,26 +292,6 @@ return [
             'model' => Note::class,
         ],
         [
-            'title' => 'settings.menu_title.item_categories',
-            'group' => '',
-            'name' => 'Item Categories',
-            'link' => '/admin/settings/item-categories',
-            'icon' => 'FolderIcon',
-            'owner_only' => false,
-            'ability' => 'view-item',
-            'model' => Item::class,
-        ],
-        [
-            'title' => 'settings.menu_title.expense_category',
-            'group' => '',
-            'name' => 'Expense Category',
-            'link' => '/admin/settings/expense-category',
-            'icon' => 'ClipboardDocumentListIcon',
-            'owner_only' => false,
-            'ability' => 'view-expense',
-            'model' => Expense::class,
-        ],
-        [
             'title' => 'settings.mail.mail_config',
             'group' => '',
             'name' => 'Mail Configuration',
@@ -354,6 +334,15 @@ return [
     ],
 
     /*
+    * Headings shown above main menu groups, by group number
+    */
+    'main_menu_groups' => [
+        2 => 'navigation.groups.sales',
+        3 => 'navigation.groups.catalogue',
+        4 => 'navigation.groups.costs',
+    ],
+
+    /*
     * List of main menu
     */
     'main_menu' => [
@@ -369,7 +358,7 @@ return [
         ],
         [
             'title' => 'navigation.customers',
-            'group' => 1,
+            'group' => 2,
             'link' => '/admin/customers',
             'icon' => 'UserIcon',
             'name' => 'Customers',
@@ -379,10 +368,20 @@ return [
         ],
         [
             'title' => 'navigation.items',
-            'group' => 1,
+            'group' => 3,
             'link' => '/admin/items',
             'icon' => 'StarIcon',
             'name' => 'Items',
+            'owner_only' => false,
+            'ability' => 'view-item',
+            'model' => Item::class,
+        ],
+        [
+            'title' => 'navigation.item_categories',
+            'group' => 3,
+            'link' => '/admin/item-categories',
+            'icon' => 'FolderIcon',
+            'name' => 'Item Categories',
             'owner_only' => false,
             'ability' => 'view-item',
             'model' => Item::class,
@@ -439,10 +438,20 @@ return [
         ],
         [
             'title' => 'navigation.expenses',
-            'group' => 2,
+            'group' => 4,
             'link' => '/admin/expenses',
             'icon' => 'CalculatorIcon',
             'name' => 'Expenses',
+            'owner_only' => false,
+            'ability' => 'view-expense',
+            'model' => Expense::class,
+        ],
+        [
+            'title' => 'navigation.expense_categories',
+            'group' => 4,
+            'link' => '/admin/expense-categories',
+            'icon' => 'ClipboardDocumentListIcon',
+            'name' => 'Expense Categories',
             'owner_only' => false,
             'ability' => 'view-expense',
             'model' => Expense::class,
@@ -452,7 +461,7 @@ return [
             env('APP_ENV', 'production') == 'development' ? [
                 [
                     'title' => 'navigation.modules',
-                    'group' => 3,
+                    'group' => 5,
                     'link' => '/admin/modules',
                     'icon' => 'PuzzlePieceIcon',
                     'name' => 'Modules',
@@ -464,7 +473,7 @@ return [
         ),
         [
             'title' => 'navigation.users',
-            'group' => 3,
+            'group' => 5,
             'link' => '/admin/users',
             'icon' => 'UsersIcon',
             'name' => 'Users',
@@ -474,7 +483,7 @@ return [
         ],
         [
             'title' => 'navigation.reports',
-            'group' => 3,
+            'group' => 5,
             'link' => '/admin/reports',
             'icon' => 'ChartBarIcon',
             'name' => 'Reports',
@@ -484,7 +493,7 @@ return [
         ],
         [
             'title' => 'navigation.settings',
-            'group' => 3,
+            'group' => 5,
             'link' => '/admin/settings',
             'icon' => 'CogIcon',
             'name' => 'Settings',
