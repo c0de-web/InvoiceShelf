@@ -71,7 +71,7 @@ class AppConfigProvider extends ServiceProvider
                         Config::set('mail.mailers.smtp.scheme', $mailSettings['mail_scheme'] ?? null);
                         Config::set('mail.mailers.smtp.url', $mailSettings['mail_url'] ?? null);
                         Config::set('mail.mailers.smtp.timeout', $mailSettings['mail_timeout'] ?? null);
-                        Config::set('mail.mailers.smtp.local_domain', $mailSettings['mail_local_domain'] ?? null);
+                        Config::set('mail.mailers.smtp.local_domain', $mailSettings['mail_local_domain'] ?: config('mail.mailers.smtp.local_domain'));
                         break;
 
                     case 'mailgun':
