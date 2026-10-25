@@ -50,26 +50,19 @@
         window.customer_logo = "/storage/{{$customer_logo}}"
 
         @endif
-        @if(isset($login_page_logo))
-
-        window.login_page_logo = "/storage/{{$login_page_logo}}"
-
+        @php($loginPage = \App\Support\LoginPage::settings())
+        @if(!empty($loginPage['login_page_logo']))
+        window.login_page_logo = @json('/storage/'.$loginPage['login_page_logo'])
         @endif
-        @if(isset($login_page_heading))
-
-        window.login_page_heading = "{{$login_page_heading}}"
-
+        @foreach(\App\Support\LoginPage::TEXT_SETTINGS as $key)
+        @if(!empty($loginPage[$key]))
+        window.{{ $key }} = @json($loginPage[$key])
         @endif
-        @if(isset($login_page_description))
-
-        window.login_page_description = "{{$login_page_description}}"
-
+        @endforeach
+        @if($loginBrandColor = \App\Support\LoginPage::brandColor())
+        window.login_brand_color = @json($loginBrandColor)
         @endif
-        @if(isset($copyright_text))
-
-        window.copyright_text = "{{$copyright_text}}"
-
-        @endif
+        window.source_code_url = @json(config('invoiceshelf.source_code_url'))
 
         @if(config('app.env') === 'demo')
             window.demo_mode = true

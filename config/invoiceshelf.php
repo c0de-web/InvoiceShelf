@@ -48,6 +48,11 @@ return [
     'base_url' => 'https://invoiceshelf.com',
 
     /*
+    * Where users of this installation can get its source code (AGPL §13); linked on the login page.
+    */
+    'source_code_url' => env('SOURCE_CODE_URL', 'https://github.com/c0de-web/InvoiceShelf'),
+
+    /*
     * Whether the app runs inside the official Docker image. The image's
     * docker/production/inject.sh sets CONTAINERIZED=true in .env at startup.
     * When true, the in-app updater is disabled (the API refuses and the UI hides

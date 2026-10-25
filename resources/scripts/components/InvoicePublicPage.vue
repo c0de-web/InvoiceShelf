@@ -67,6 +67,8 @@ I
         <a href="https://invoiceshelf.com" target="_blank">
           <img :src="getLogo()" class="h-4 ml-1 mb-1" />
         </a>
+        <span class="px-1">·</span>
+        <a :href="sourceCodeUrl" target="_blank">Source code</a>
       </div>
     </div>
   </div>
@@ -81,6 +83,7 @@ import InvoiceInformationCard from '@/scripts/components/InvoiceInformationCard.
 let invoiceData = ref(null)
 const route = useRoute()
 const router = useRouter()
+const sourceCodeUrl = window.source_code_url
 
 loadInvoice()
 

@@ -1167,7 +1167,18 @@
       "app_icon": "App icon",
       "app_icon_help": "The browser tab and home-screen icon for everyone. PNG or JPG, ideally square; anything else is cropped to its centre.",
       "app_icon_saved": "App icon saved. Reload the page to see it in the tab.",
-      "app_icon_removed": "App icon removed"
+      "app_icon_removed": "App icon removed",
+      "login_page": "Login page",
+      "login_page_help": "Shown before anyone signs in. It uses the brand colour of your first company.",
+      "login_logo": "Login page logo",
+      "login_logo_saved": "Login page logo saved",
+      "login_logo_removed": "Login page logo removed",
+      "login_heading": "Heading",
+      "login_description": "Description",
+      "copyright": "Copyright line",
+      "copyright_help": "Shown under the sign-in form, followed by the year. The InvoiceShelf credit and a link to the source code always stay, as its licence requires.",
+      "default_placeholder": "Leave empty for the default",
+      "login_page_saved": "Login page saved"
     },
     "notification": {
       "title": "Notifications",

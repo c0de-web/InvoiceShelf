@@ -387,6 +387,10 @@ Route::prefix('/v1')->group(function () {
 
             Route::post('/app-icon', [BrandingController::class, 'uploadAppIcon']);
 
+            Route::put('/branding/login-page', [BrandingController::class, 'updateLoginPage']);
+
+            Route::post('/branding/login-logo', [BrandingController::class, 'uploadLoginLogo']);
+
             Route::get('/company/settings', GetCompanySettingsController::class);
 
             Route::post('/company/settings', UpdateCompanySettingsController::class);

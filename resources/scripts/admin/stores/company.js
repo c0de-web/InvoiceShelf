@@ -78,6 +78,34 @@ export const useCompanyStore = (useWindow = false) => {
         })
       },
 
+      updateLoginPage(data) {
+        return new Promise((resolve, reject) => {
+          http
+            .put('/api/v1/branding/login-page', data)
+            .then((response) => {
+              resolve(response)
+            })
+            .catch((err) => {
+              handleError(err)
+              reject(err)
+            })
+        })
+      },
+
+      updateLoginLogo(data) {
+        return new Promise((resolve, reject) => {
+          http
+            .post('/api/v1/branding/login-logo', data)
+            .then((response) => {
+              resolve(response)
+            })
+            .catch((err) => {
+              handleError(err)
+              reject(err)
+            })
+        })
+      },
+
       updateAppIcon(data) {
         return new Promise((resolve, reject) => {
           http

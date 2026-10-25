@@ -23,5 +23,16 @@
       class="pl-1 font-normal text-gray-900"
       >Bytefury
     </a>
+    <span class="px-1">·</span>
+    <a
+      :href="sourceCodeUrl"
+      target="_blank"
+      class="font-normal text-gray-900"
+      >Source code</a
+    >
   </footer>
 </template>
+
+<script setup>
+const sourceCodeUrl = window.source_code_url
+</script>

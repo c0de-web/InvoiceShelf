@@ -101,6 +101,60 @@
         @remove="removeImage('app_icon')"
       />
     </BaseInputGroup>
+
+    <BaseDivider class="my-8" />
+
+    <h3 class="text-lg font-medium text-gray-900">
+      {{ $t('settings.branding.login_page') }}
+    </h3>
+    <p class="mt-1 text-sm text-gray-500">
+      {{ $t('settings.branding.login_page_help') }}
+    </p>
+
+    <BaseInputGroup class="mt-6" :label="$t('settings.branding.login_logo')">
+      <BaseFileUploader
+        v-model="loginLogoPreview"
+        base64
+        @change="(name, data, count, file) => uploadImage('login_logo', file.name, data)"
+        @remove="removeImage('login_logo')"
+      />
+    </BaseInputGroup>
+
+    <form class="mt-6 space-y-6" @submit.prevent="saveLoginPage">
+      <BaseInputGroup :label="$t('settings.branding.login_heading')">
+        <BaseInput
+          v-model="loginForm.login_page_heading"
+          :placeholder="$t('settings.branding.default_placeholder')"
+        />
+      </BaseInputGroup>
+
+      <BaseInputGroup :label="$t('settings.branding.login_description')">
+        <BaseTextarea
+          v-model="loginForm.login_page_description"
+          rows="3"
+          :placeholder="$t('settings.branding.default_placeholder')"
+        />
+      </BaseInputGroup>
+
+      <BaseInputGroup
+        :label="$t('settings.branding.copyright')"
+        :help-text="$t('settings.branding.copyright_help')"
+      >
+        <BaseInput
+          v-model="loginForm.copyright_text"
+          placeholder="© C0de Web Ltd"
+        />
+      </BaseInputGroup>
+
+      <BaseButton
+        :disabled="isSavingLogin"
+        :loading="isSavingLogin"
+        variant="primary"
+        type="submit"
+      >
+        {{ $t('settings.branding.save') }}
+      </BaseButton>
+    </form>
   </BaseSettingCard>
 </template>
 
@@ -170,9 +224,39 @@ const appIconPreview = ref(
     : []
 )
 
+const loginLogoPreview = ref(
+  globalStore.globalSettings.login_page_logo
+    ? [{ image: `/storage/${globalStore.globalSettings.login_page_logo}` }]
+    : []
+)
+
+const loginForm = reactive({
+  login_page_heading: globalStore.globalSettings.login_page_heading || '',
+  login_page_description: globalStore.globalSettings.login_page_description || '',
+  copyright_text: globalStore.globalSettings.copyright_text || '',
+})
+
+const isSavingLogin = ref(false)
+
+async function saveLoginPage() {
+  isSavingLogin.value = true
+
+  try {
+    await companyStore.updateLoginPage({ ...loginForm })
+    Object.assign(globalStore.globalSettings, loginForm)
+    notificationStore.showNotification({
+      type: 'success',
+      message: t('settings.branding.login_page_saved'),
+    })
+  } finally {
+    isSavingLogin.value = false
+  }
+}
+
 const uploaders = {
   header_logo: (data) => companyStore.updateHeaderLogo(data),
   app_icon: (data) => companyStore.updateAppIcon(data),
+  login_logo: (data) => companyStore.updateLoginLogo(data),
 }
 
 async function uploadImage(field, name, data) {

@@ -49,6 +49,15 @@
             {{ copyrightText }}
             {{ new Date().getFullYear() }}
           </p>
+          <p v-if="hasOwnCopyright" class="text-xs font-normal">
+            Powered by
+            <a href="https://invoiceshelf.com" target="_blank" class="underline">InvoiceShelf</a>
+            (© IDEOLOGIX MEDIA DOOEL) ·
+            <a :href="sourceCodeUrl" target="_blank" class="underline">Source code</a>
+          </p>
+          <p v-else class="text-xs font-normal">
+            <a :href="sourceCodeUrl" target="_blank" class="underline">Source code</a>
+          </p>
         </div>
       </div>
     </div>
@@ -135,6 +144,13 @@ import LoginPlanetCrater from '@/scripts/components/svg/LoginPlanetCrater.vue'
 import LoginBottomVector from '@/scripts/components/svg/LoginBottomVector.vue'
 import LoginBackgroundOverlay from '@/scripts/components/svg/LoginBackgroundOverlay.vue'
 import { computed, ref } from 'vue'
+import { applyBrandColor } from '@/scripts/helpers/brand-color'
+
+applyBrandColor(window.login_brand_color)
+
+// AGPL: users of this modified InvoiceShelf are offered its source, and the original notice stays.
+const sourceCodeUrl = window.source_code_url
+const hasOwnCopyright = !!window.copyright_text
 
 const pageHeading = computed(() => {
   if (window.login_page_heading) {

@@ -6,7 +6,7 @@ use App\Rules\Base64Mime;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * The header logo and app icon uploads: PNG or JPG only (an SVG served from our origin could run script).
+ * The header logo, app icon and login logo uploads: PNG or JPG only (an SVG served from our origin could run script).
  */
 class BrandingImageRequest extends FormRequest
 {
@@ -29,6 +29,10 @@ class BrandingImageRequest extends FormRequest
                 new Base64Mime(['jpg', 'png']),
             ],
             'app_icon' => [
+                'nullable',
+                new Base64Mime(['jpg', 'png']),
+            ],
+            'login_logo' => [
                 'nullable',
                 new Base64Mime(['jpg', 'png']),
             ],
