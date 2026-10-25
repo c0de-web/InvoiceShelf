@@ -5,6 +5,7 @@ import { useUserStore } from './user'
 import { useModuleStore } from './module'
 import { useNotificationStore } from '@/scripts/stores/notification'
 import { handleError } from '@/scripts/helpers/error-handling'
+import { applyBrandColor } from '@/scripts/helpers/brand-color'
 import _ from 'lodash'
 
 export const useGlobalStore = (useWindow = false) => {
@@ -76,6 +77,7 @@ export const useGlobalStore = (useWindow = false) => {
               companyStore.setSelectedCompany(response.data.current_company)
               companyStore.selectedCompanySettings =
                 response.data.current_company_settings
+              applyBrandColor(response.data.current_company_settings?.brand_color)
               companyStore.selectedCompanyCurrency =
                 response.data.current_company_currency
 

@@ -2,6 +2,7 @@ import http from '@/scripts/http'
 import { defineStore } from 'pinia'
 import { useNotificationStore } from '@/scripts/stores/notification'
 import { handleError } from '@/scripts/helpers/error-handling'
+import { applyBrandColor } from '@/scripts/helpers/brand-color'
 import Ls from '@/scripts/services/ls'
 
 export const useCompanyStore = (useWindow = false) => {
@@ -149,6 +150,10 @@ export const useCompanyStore = (useWindow = false) => {
             .post('/api/v1/company/settings', data)
             .then((response) => {
               Object.assign(this.selectedCompanySettings, data.settings)
+
+              if ('brand_color' in data.settings) {
+                applyBrandColor(data.settings.brand_color)
+              }
 
               if (message) {
                 const notificationStore = useNotificationStore()

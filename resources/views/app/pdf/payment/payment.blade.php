@@ -1,3 +1,4 @@
+@php($brand = \App\Support\BrandColor::forCompany($payment->company_id))
 <!DOCTYPE html>
 <html>
 
@@ -51,7 +52,7 @@
         .header-logo {
             /* position: absolute; */
             text-transform: capitalize;
-            color: #7675ff;
+            color: {{ $brand->accent }};
             padding-top: 0px;
         }
 
@@ -271,7 +272,7 @@
             font-size: 14px;
             line-height: 21px;
             text-align: right;
-            color: #5851D8;
+            color: {{ $brand->primary }};
             margin-left: 150px;
         }
 

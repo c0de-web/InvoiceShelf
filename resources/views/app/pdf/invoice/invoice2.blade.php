@@ -1,3 +1,4 @@
+@php($brand = \App\Support\BrandColor::forCompany($invoice->company_id))
 <!DOCTYPE html>
 <html>
 
@@ -30,7 +31,7 @@
         /* -- Header -- */
 
         .header-container {
-            background: #7675ff;
+            background: {{ $brand->accent }};
             position: absolute;
             width: 100%;
             height: 141px;
@@ -324,7 +325,7 @@
         /* -- Helpers -- */
 
         .text-primary {
-            color: #5851DB;
+            color: {{ $brand->primary }};
         }
 
         .text-center {

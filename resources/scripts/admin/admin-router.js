@@ -35,6 +35,8 @@ const Customization = () =>
   )
 const Notifications = () =>
   import('@/scripts/admin/views/settings/NotificationsSetting.vue')
+const Branding = () =>
+  import('@/scripts/admin/views/settings/BrandingSetting.vue')
 const TaxTypes = () =>
   import('@/scripts/admin/views/settings/TaxTypesSetting.vue')
 const PaymentMode = () =>
@@ -262,6 +264,12 @@ export default [
             name: 'notifications',
             meta: { isOwner: true },
             component: Notifications,
+          },
+          {
+            path: 'branding',
+            name: 'branding',
+            meta: { isOwner: true },
+            component: Branding,
           },
           {
             path: 'roles-settings',

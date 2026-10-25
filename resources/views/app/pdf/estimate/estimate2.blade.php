@@ -1,3 +1,4 @@
+@php($brand = \App\Support\BrandColor::forCompany($estimate->company_id))
 <!DOCTYPE html>
 <html>
 
@@ -354,7 +355,7 @@
         /* -- Helpers -- */
 
         .text-primary {
-            color: #5851DB;
+            color: {{ $brand->primary }};
         }
 
         .text-center {

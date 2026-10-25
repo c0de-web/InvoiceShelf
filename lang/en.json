@@ -869,7 +869,8 @@
       "notes": "Notes",
       "exchange_rate": "Exchange Rate",
       "address_information": "Address Information",
-      "pdf_generation": "PDF Generation"
+      "pdf_generation": "PDF Generation",
+      "branding": "Branding"
     },
     "address_information": {
       "section_description": "  You can update Your Address information using form below."
@@ -1147,6 +1148,18 @@
       "email": "Email",
       "password": "Password",
       "confirm_password": "Confirm Password"
+    },
+    "branding": {
+      "title": "Branding",
+      "description": "Your company's colour, used across the app and on its invoices, estimates and payment receipts.",
+      "brand_color": "Brand colour",
+      "brand_color_help": "Pick a colour or type a hex code like #0F766E. White text must be readable on it.",
+      "invalid_hex": "Use a hex colour like #0F766E.",
+      "preview": "Preview",
+      "sample_button": "Sample button",
+      "save": "Save",
+      "reset": "Back to the default colour",
+      "saved": "Brand colour saved"
     },
     "notification": {
       "title": "Notifications",

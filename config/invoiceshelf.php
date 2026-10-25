@@ -237,6 +237,16 @@ return [
             'model' => '',
         ],
         [
+            'title' => 'settings.menu_title.branding',
+            'group' => '',
+            'name' => 'Branding',
+            'link' => '/admin/settings/branding',
+            'icon' => 'SwatchIcon',
+            'owner_only' => true,
+            'ability' => '',
+            'model' => '',
+        ],
+        [
             'title' => 'settings.menu_title.tax_types',
             'group' => '',
             'name' => 'Tax types',

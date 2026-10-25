@@ -1,3 +1,4 @@
+@php($brand = \App\Support\BrandColor::forCompany($invoice->company_id))
 <!DOCTYPE html>
 <html>
 
@@ -49,7 +50,7 @@
             margin-top: 20px;
             padding-bottom: 20px;
             text-transform: capitalize;
-            color: #7675ff;
+            color: {{ $brand->accent }};
         }
 
         .content-wrapper {
@@ -277,7 +278,7 @@
         /* -- Helpers -- */
 
         .text-primary {
-            color: #5851DB;
+            color: {{ $brand->primary }};
         }
 
 
