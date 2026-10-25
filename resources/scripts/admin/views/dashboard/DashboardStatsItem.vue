@@ -5,12 +5,14 @@
       relative
       flex
       justify-between
-      p-3
+      p-4
       bg-white
-      rounded
-      shadow
-      hover:bg-gray-50
-      xl:p-4
+      border border-gray-100
+      rounded-2xl
+      shadow-sm
+      transition-shadow
+      hover:shadow-md
+      xl:p-5
       lg:col-span-2
     "
     :class="{ 'lg:!col-span-3': large }"
@@ -24,8 +26,10 @@
         {{ label }}
       </span>
     </div>
-    <div class="flex items-center">
-      <component :is="iconComponent" class="w-10 h-10 xl:w-12 xl:h-12" />
+    <div
+      class="flex items-center justify-center w-11 h-11 rounded-xl bg-primary-50 text-primary-600 xl:w-12 xl:h-12"
+    >
+      <component :is="iconComponent" class="w-6 h-6" :stroke-width="1.75" />
     </div>
   </router-link>
 

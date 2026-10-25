@@ -45,6 +45,7 @@
     "guid": "^0.0.12",
     "laravel-vite-plugin": "^3.0.0",
     "lodash": "^4.17.21",
+    "lucide-vue-next": "^1.0.0",
     "maska": "^3.0.4",
     "mini-svg-data-uri": "^1.4.4",
     "moment": "^2.30.1",

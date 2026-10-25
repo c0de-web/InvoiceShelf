@@ -51,10 +51,12 @@
 </template>
 
 <script setup>
-import DollarIcon from '@/scripts/components/icons/dashboard/DollarIcon.vue'
-import CustomerIcon from '@/scripts/components/icons/dashboard/CustomerIcon.vue'
-import InvoiceIcon from '@/scripts/components/icons/dashboard/InvoiceIcon.vue'
-import EstimateIcon from '@/scripts/components/icons/dashboard/EstimateIcon.vue'
+import {
+  CircleDollarSign as DollarIcon,
+  Users as CustomerIcon,
+  FileText as InvoiceIcon,
+  ClipboardList as EstimateIcon,
+} from 'lucide-vue-next'
 import abilities from '@/scripts/admin/stub/abilities'
 import DashboardStatsItem from './DashboardStatsItem.vue'
 

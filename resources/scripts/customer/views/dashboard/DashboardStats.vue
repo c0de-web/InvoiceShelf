@@ -49,10 +49,12 @@
 
 <script setup>
 import { inject } from 'vue'
-import DollarIcon from '@/scripts/components/icons/dashboard/DollarIcon.vue'
-import InvoiceIcon from '@/scripts/components/icons/dashboard/InvoiceIcon.vue'
-import PaymentIcon from '@/scripts/components/icons/dashboard/PaymentIcon.vue'
-import EstimateIcon from '@/scripts/components/icons/dashboard/EstimateIcon.vue'
+import {
+  CircleDollarSign as DollarIcon,
+  FileText as InvoiceIcon,
+  CreditCard as PaymentIcon,
+  ClipboardList as EstimateIcon,
+} from 'lucide-vue-next'
 
 import { useGlobalStore } from '@/scripts/customer/stores/global'
 import { useDashboardStore } from '@/scripts/customer/stores/dashboard'

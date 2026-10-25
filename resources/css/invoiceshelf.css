@@ -29,7 +29,31 @@
 
 @theme {
   --spacing-88: 22rem;
-  --font-base: Poppins, sans-serif;
+  --font-base: Inter, ui-sans-serif, system-ui, sans-serif;
+
+  /* Softer corners than Tailwind's defaults (xs 2px … 2xl 16px), so every rounded-* follows. */
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+}
+
+@font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url("$fonts/InterVariable.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Inter";
+    font-style: italic;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url("$fonts/InterVariable-Italic.woff2") format("woff2");
 }
 
 @utility bg-multiselect-caret {
