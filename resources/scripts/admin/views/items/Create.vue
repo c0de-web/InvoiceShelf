@@ -71,6 +71,22 @@
           </BaseInputGroup>
 
           <BaseInputGroup
+            :content-loading="isFetchingInitialData"
+            :label="$t('settings.item_categories.category')"
+          >
+            <BaseMultiselect
+              v-model="itemStore.currentItem.item_category_id"
+              :content-loading="isFetchingInitialData"
+              label="label"
+              :options="itemCategoryStore.options"
+              value-prop="id"
+              :placeholder="$t('settings.item_categories.select_category')"
+              searchable
+              track-by="label"
+            />
+          </BaseInputGroup>
+
+          <BaseInputGroup
             v-if="isTaxPerItem"
             :label="$t('items.taxes')"
             :content-loading="isFetchingInitialData"
@@ -146,6 +162,7 @@ import {
 } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
 import { useItemStore } from '@/scripts/admin/stores/item'
+import { useItemCategoryStore } from '@/scripts/admin/stores/item-category'
 import { useCompanyStore } from '@/scripts/admin/stores/company'
 import { useTaxTypeStore } from '@/scripts/admin/stores/tax-type'
 import { useModalStore } from '@/scripts/stores/modal'
@@ -154,6 +171,7 @@ import { useUserStore } from '@/scripts/admin/stores/user'
 import abilities from '@/scripts/admin/stub/abilities'
 
 const itemStore = useItemStore()
+const itemCategoryStore = useItemCategoryStore()
 const taxTypeStore = useTaxTypeStore()
 const modalStore = useModalStore()
 const companyStore = useCompanyStore()
@@ -256,6 +274,7 @@ async function loadData() {
   isFetchingInitialData.value = true
 
   await itemStore.fetchItemUnits({ limit: 'all' })
+  await itemCategoryStore.fetchCategories()
   if (userStore.hasAbilities(abilities.VIEW_TAX_TYPE)) {
     await taxTypeStore.fetchTaxTypes({ limit: 'all' })
   }

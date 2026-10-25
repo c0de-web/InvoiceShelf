@@ -292,6 +292,16 @@ return [
             'model' => Note::class,
         ],
         [
+            'title' => 'settings.menu_title.item_categories',
+            'group' => '',
+            'name' => 'Item Categories',
+            'link' => '/admin/settings/item-categories',
+            'icon' => 'FolderIcon',
+            'owner_only' => false,
+            'ability' => 'view-item',
+            'model' => Item::class,
+        ],
+        [
             'title' => 'settings.menu_title.expense_category',
             'group' => '',
             'name' => 'Expense Category',

@@ -20,6 +20,7 @@ class ItemResource extends JsonResource
             'description' => $this->description,
             'price' => $this->price,
             'unit_id' => $this->unit_id,
+            'item_category_id' => $this->item_category_id,
             'company_id' => $this->company_id,
             'creator_id' => $this->creator_id,
             'currency_id' => $this->currency_id,
@@ -27,6 +28,9 @@ class ItemResource extends JsonResource
             'updated_at' => $this->updated_at,
             'tax_per_item' => $this->tax_per_item,
             'formatted_created_at' => $this->formattedCreatedAt,
+            'category' => $this->when($this->category()->exists(), function () {
+                return new ItemCategoryResource($this->category->load('parent'));
+            }),
             'unit' => $this->when($this->unit()->exists(), function () {
                 return new UnitResource($this->unit);
             }),

@@ -32,6 +32,11 @@ class Item extends Model
         return $this->belongsTo(Unit::class, 'unit_id');
     }
 
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(ItemCategory::class, 'item_category_id');
+    }
+
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
@@ -92,11 +97,22 @@ class Item extends Model
             $query->whereItem($filters->get('item_id'));
         }
 
+        if ($filters->get('item_category_id')) {
+            $query->whereCategoryOrSubcategory($filters->get('item_category_id'));
+        }
+
         if ($filters->get('orderByField') || $filters->get('orderBy')) {
             $field = $filters->get('orderByField') ? $filters->get('orderByField') : 'name';
             $orderBy = $filters->get('orderBy') ? $filters->get('orderBy') : 'asc';
             $query->whereOrder($field, $orderBy);
         }
+    }
+
+    public function scopeWhereCategoryOrSubcategory($query, $categoryId)
+    {
+        $query->whereIn('items.item_category_id', ItemCategory::whereCompany()
+            ->where(fn ($q) => $q->whereKey($categoryId)->orWhere('parent_id', $categoryId))
+            ->select('id'));
     }
 
     public function scopePaginateData($query, $limit)

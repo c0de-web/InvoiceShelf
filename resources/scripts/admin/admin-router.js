@@ -47,6 +47,8 @@ const NotesSetting = () =>
   import('@/scripts/admin/views/settings/NotesSetting.vue')
 const ExpenseCategory = () =>
   import('@/scripts/admin/views/settings/ExpenseCategorySetting.vue')
+const ItemCategories = () =>
+  import('@/scripts/admin/views/settings/ItemCategorySetting.vue')
 const ExchangeRateSetting = () =>
   import('@/scripts/admin/views/settings/ExchangeRateProviderSetting.vue')
 const MailConfig = () =>
@@ -311,6 +313,12 @@ export default [
             name: 'expense.category',
             meta: { ability: abilities.VIEW_EXPENSE },
             component: ExpenseCategory,
+          },
+          {
+            path: 'item-categories',
+            name: 'item.categories',
+            meta: { ability: abilities.VIEW_ITEM },
+            component: ItemCategories,
           },
 
           {

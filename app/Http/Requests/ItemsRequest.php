@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ItemsRequest extends FormRequest
 {
@@ -31,6 +32,11 @@ class ItemsRequest extends FormRequest
             ],
             'description' => [
                 'nullable',
+            ],
+            'item_category_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('item_categories', 'id')->where('company_id', $this->header('company')),
             ],
         ];
     }

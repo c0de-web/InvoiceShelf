@@ -870,6 +870,7 @@
       "exchange_rate": "Exchange Rate",
       "address_information": "Address Information",
       "pdf_generation": "PDF Generation",
+      "item_categories": "Item Categories",
       "branding": "Branding"
     },
     "address_information": {
@@ -1283,6 +1284,25 @@
       "payments_attached": "This payment method is already attached to payments. Please delete the attached payments to proceed with deletion.",
       "expenses_attached": "This payment method is already attached to expenses. Please delete the attached expenses to proceed with deletion.",
       "deleted_message": "Payment Mode deleted successfully"
+    },
+    "item_categories": {
+      "title": "Item Categories",
+      "description_text": "Group the things you sell, with one level of subcategories, e.g. Hosting › Web hosting.",
+      "add_category": "Add Category",
+      "edit_category": "Edit Category",
+      "name": "Name",
+      "parent": "Parent category",
+      "parent_help": "Leave empty for a top-level category.",
+      "no_parent": "None (top level)",
+      "description": "Description",
+      "items_count": "No items | 1 item | {count} items",
+      "empty": "No categories yet. Add one to start grouping your items.",
+      "saved": "Category saved",
+      "deleted": "Category deleted",
+      "confirm_delete": "Delete the category {name}? Categories with items or subcategories can't be deleted.",
+      "category": "Category",
+      "select_category": "Select a category",
+      "uncategorised": "Uncategorised"
     },
     "expense_category": {
       "title": "Expense Categories",

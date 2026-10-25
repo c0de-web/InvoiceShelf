@@ -44,6 +44,15 @@
       @update:modelValue="(val) => $emit('select', val)"
       @searchChange="(val) => $emit('search', val)"
     >
+      <template #option="{ option }">
+        <span class="flex justify-between w-full gap-3">
+          <span>{{ option.name }}</span>
+          <span v-if="option.category" class="text-xs text-gray-400">
+            {{ categoryLabel(option.category) }}
+          </span>
+        </span>
+      </template>
+
       <!-- Add Item Action  -->
       <template #action>
         <BaseSelectAction
@@ -86,6 +95,7 @@ import { useRoute } from 'vue-router'
 import { useEstimateStore } from '@/scripts/admin/stores/estimate'
 import { useInvoiceStore } from '@/scripts/admin/stores/invoice'
 import { useItemStore } from '@/scripts/admin/stores/item'
+import { categoryLabel } from '@/scripts/admin/stores/item-category'
 import { useModalStore } from '@/scripts/stores/modal'
 import { useUserStore } from '@/scripts/admin/stores/user'
 import abilities from '@/scripts/admin/stub/abilities'
@@ -162,9 +172,14 @@ const description = computed({
   },
 })
 
+// Items of the same category sit together; uncategorised ones come last.
 async function searchItems(search) {
   let res = await itemStore.fetchItems({ search })
-  return res.data.data
+  const key = (item) => (item.category ? categoryLabel(item.category) : '\uffff')
+
+  return [...res.data.data].sort(
+    (a, b) => key(a).localeCompare(key(b)) || a.name.localeCompare(b.name)
+  )
 }
 
 function onTextChange(val) {

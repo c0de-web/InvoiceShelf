@@ -23,6 +23,7 @@ export const useItemStore = (useWindow = false) => {
         description: '',
         price: 0,
         unit_id: '',
+        item_category_id: null,
         unit: null,
         taxes: [],
         tax_per_item: false,
@@ -38,6 +39,7 @@ export const useItemStore = (useWindow = false) => {
           description: '',
           price: 0,
           unit_id: '',
+          item_category_id: null,
           unit: null,
           taxes: [],
         }

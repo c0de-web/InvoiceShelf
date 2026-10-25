@@ -63,6 +63,22 @@
         />
       </BaseInputGroup>
 
+      <BaseInputGroup
+        class="text-left"
+        :label="$t('settings.item_categories.category')"
+      >
+        <BaseMultiselect
+          v-model="filters.item_category_id"
+          :placeholder="$t('settings.item_categories.select_category')"
+          :options="itemCategoryStore.options"
+          label="label"
+          value-prop="id"
+          track-by="label"
+          searchable
+          class="w-full"
+        />
+      </BaseInputGroup>
+
       <BaseInputGroup class="text-left" :label="$t('items.price')">
         <BaseMoney v-model="filters.price" />
       </BaseInputGroup>
@@ -165,6 +181,10 @@
           </span>
         </template>
 
+        <template #cell-category="{ row }">
+          <span>{{ categoryLabel(row.data.category) || '-' }}</span>
+        </template>
+
         <template #cell-price="{ row }">
           <BaseFormatMoney
             :amount="row.data.price"
@@ -197,6 +217,10 @@ import { useNotificationStore } from '@/scripts/stores/notification'
 import { useDialogStore } from '@/scripts/stores/dialog'
 import { useCompanyStore } from '@/scripts/admin/stores/company'
 import { useUserStore } from '@/scripts/admin/stores/user'
+import {
+  useItemCategoryStore,
+  categoryLabel,
+} from '@/scripts/admin/stores/item-category'
 import ItemDropdown from '@/scripts/admin/components/dropdowns/ItemIndexDropdown.vue'
 import SatelliteIcon from '@/scripts/components/icons/empty/SatelliteIcon.vue'
 import abilities from '@/scripts/admin/stub/abilities'
@@ -208,6 +232,7 @@ const companyStore = useCompanyStore()
 const notificationStore = useNotificationStore()
 const dialogStore = useDialogStore()
 const userStore = useUserStore()
+const itemCategoryStore = useItemCategoryStore()
 
 const { t } = useI18n()
 let showFilters = ref(false)
@@ -216,6 +241,7 @@ let isFetchingInitialData = ref(true)
 const filters = reactive({
   name: '',
   unit_id: '',
+  item_category_id: null,
   price: '',
 })
 
@@ -248,6 +274,11 @@ const itemColumns = computed(() => {
       tdClass: 'font-medium text-gray-900',
     },
     { key: 'unit_name', label: t('items.unit') },
+    {
+      key: 'category',
+      label: t('settings.item_categories.category'),
+      sortable: false,
+    },
     { key: 'price', label: t('items.price') },
     { key: 'created_at', label: t('items.added_on') },
 
@@ -269,6 +300,7 @@ debouncedWatch(
 )
 
 itemStore.fetchItemUnits({ limit: 'all' })
+itemCategoryStore.fetchCategories()
 
 onUnmounted(() => {
   if (itemStore.selectAllField) {
@@ -279,6 +311,7 @@ onUnmounted(() => {
 function clearFilter() {
   filters.name = ''
   filters.unit_id = ''
+  filters.item_category_id = null
   filters.price = ''
 }
 
@@ -312,6 +345,7 @@ async function fetchData({ page, filter, sort }) {
   let data = {
     search: filters.name,
     unit_id: filters.unit_id !== null ? filters.unit_id : '',
+    item_category_id: filters.item_category_id ?? '',
     price: Math.round(filters.price * 100),
     orderByField: sort.fieldName || 'created_at',
     orderBy: sort.order || 'desc',
