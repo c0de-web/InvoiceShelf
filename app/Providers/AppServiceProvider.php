@@ -20,6 +20,7 @@ use App\Policies\RolePolicy;
 use App\Policies\SettingsPolicy;
 use App\Policies\UserPolicy;
 use App\Space\InstallUtils;
+use App\Support\MetadataStrippingMediaFilesystem;
 use Gate;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Mail;
@@ -27,6 +28,7 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\ServiceProvider;
 use Silber\Bouncer\Database\Models as BouncerModels;
 use Silber\Bouncer\Database\Role;
+use Spatie\MediaLibrary\MediaCollections\Filesystem as MediaFilesystem;
 use View;
 
 class AppServiceProvider extends ServiceProvider
@@ -79,6 +81,8 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         BouncerModels::scope(new DefaultScope);
+
+        $this->app->bind(MediaFilesystem::class, MetadataStrippingMediaFilesystem::class);
     }
 
     public function addMenus()
